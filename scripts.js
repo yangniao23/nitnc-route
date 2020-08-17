@@ -1,31 +1,31 @@
 // start clockbox
-function set2fig(num) {
+const set2fig = num  => {
     // 桁数が1桁だったら先頭に0を加えて2桁に調整する
     let ret;
     if( num < 10 ) { ret = "0" + num; }
     else { ret = num; }
     return ret;
- }
+ };
 
-function nowtime() {
+const nowtime = ()=> {
     const nowTime = new Date();
     const nowHour = set2fig(nowTime.getHours());
     const nowMin  = set2fig(nowTime.getMinutes());
     const nowSec  = set2fig(nowTime.getSeconds());
     return [nowHour, nowMin, nowSec];
-}
- function showClock() {
+};
+
+const showClock = () => {
     const time = nowtime();
     const msg = "現在時刻: " + time[0] + "時" + time[1] + "分" + time[2] + "秒";
     document.getElementById("clockbox").innerHTML = msg;
- }
+};
 
- setInterval('showClock()',250);
  // end clockbox
 
 
  // start transfer
-function getlatest() {
+const getlatest = () =>  {
     const time = nowtime().join(',').replace(/,/g, '');
 
     //document.getElementById("next_").innerHTML = next_;
@@ -47,17 +47,29 @@ function gettimetablefilename(data, startpoint, endpoint) {
  // end setting
 
  // start modules
-function readjson(path) {
-    const req = new XMLHttpRequest();
-    req.onreadystatechange = function() {
-        if(req.readyState == 4 && req.status == 200){
-            console.log(req.responseText);
-        }
-    };
-    req.open("GET", path, false);
-    req.send(null);
-}
-
-
-
+ const readjson = path => {
+    return new Promise((resolve, reject) => {
+        const req = new XMLHttpRequest();
+        let changeTimes = 0;
+        req.onreadystatechange = () => {
+            changeTimes++;
+            if (changeTimes == 1) return
+            console.log('readyState : '+req.readyState);
+            console.log('req.status : '+req.status);
+            if (changeTimes == 2 && req.readyState == 4 && req.status == 200) {
+                resolve(req.responseText);
+            } else {
+                reject('ERROR!!!!');
+            };
+        };
+        req.open('GET', path, false);
+        req.send(null);
+    })
+};
  // end modules
+
+//start ivent
+
+setInterval('showClock()',250);
+
+//end ivent
